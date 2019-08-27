@@ -7,7 +7,7 @@
  * @param {HTMLFormElement} form - reference to form elemnt
  * @param {Object.<string, *>} settings - settings before send
  */
-const submitForm = (form, settings) => {
+const submitFormData = (form, settings) => {
 	if (!settings || !form) {
 		console.warn('Must configure form settings')
 		return false
@@ -16,11 +16,11 @@ const submitForm = (form, settings) => {
 		console.warn('Must set "fields" property value with input class name.')
 	else {
 		form.setAttribute('novalidate', '')
-		submitFormData(form, settings)
+		submitForm(form, settings)
 	}
 }
 //
-const submitFormData = (form, settings) => {
+const submitForm = (form, settings) => {
 	const fields = form.querySelectorAll(settings.fields)
 	const msg = document.createElement('div')
 	const validate = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/
@@ -101,4 +101,4 @@ const urlencodeFormData = fd => {
 	return str
 }
 //
-export default submitForm
+module.exports.submitFormData = submitFormData

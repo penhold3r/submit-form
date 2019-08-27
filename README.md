@@ -9,7 +9,7 @@ Submit form data asynchronous
 ## Usage
 
 ```javascript
-import { submitForm } from 'submit-form'
+import { submitFormData } from 'submit-form-data'
 
 const form = document.querySelector('.form')
 
@@ -22,7 +22,7 @@ const settings = {
 	reciever: 'hello@world-mail.com'
 }
 
-submitForm(form, settings)
+submitFormData(form, settings)
 ```
 
 ```html
