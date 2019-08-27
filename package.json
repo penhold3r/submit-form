@@ -1,0 +1,11 @@
+{
+  "name": "submit-form",
+  "version": "1.0.0",
+  "description": "Submit form data asyncronusly",
+  "main": "submit-form.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "penholder",
+  "license": "MIT"
+}
