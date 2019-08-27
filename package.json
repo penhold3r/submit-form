@@ -1,11 +1,19 @@
 {
-  "name": "submit-form",
-  "version": "1.0.0",
-  "description": "Submit form data asyncronusly",
-  "main": "submit-form.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "penholder",
-  "license": "MIT"
+	"name": "submit-form",
+	"version": "1.0.0",
+	"description": "Submit form data asyncronusly",
+	"main": "submit-form.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/penhold3r/submit-form.git"
+	},
+	"author": "penholder",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/penhold3r/submit-form/issues"
+	},
+	"homepage": "https://github.com/penhold3r/submit-form#readme"
 }

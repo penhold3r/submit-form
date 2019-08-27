@@ -1,6 +1,6 @@
 # Submit Form
 
-Submit form data asyncrounously
+Submit form data asynchronous
 
 ## Instalation
 
