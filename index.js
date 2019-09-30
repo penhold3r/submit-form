@@ -59,7 +59,7 @@ const submitForm = (form, settings) => {
 	}
 	opt.body = settings.urlencoded ? urlencodeFormData(formData) : formData
 	//
-	process.env.NODE_MODE === 'development' && console.log('data: ', opt)
+	process.env.NODE_ENV && process.env.NODE_ENV === 'development' && console.log('data: ', opt)
 	//
 	msg.querySelector('p').innerHTML = !settings.sending ? 'Sending...' : settings.sending
 	msg.classList.add('visible')
@@ -72,14 +72,16 @@ const submitForm = (form, settings) => {
 				msg.classList.add('visible')
 				form.reset()
 				//
-				process.env.NODE_MODE === 'development' && console.log('successful', opt)
+				process.env.NODE_ENV &&
+					process.env.NODE_ENV === 'development' &&
+					console.log('successful', opt)
 			} else {
 				msg.querySelector('p').innerHTML = !settings.errorMsg ? 'error' : settings.errorMsg
 				msg.querySelector('p').className = 'msg-error'
 				msg.classList.add('visible')
 				form.reset()
 				//
-				process.env.NODE_MODE === 'development' && console.warn('failed')
+				process.env.NODE_ENV && process.env.NODE_ENV === 'development' && console.warn('failed')
 			}
 		})
 		.catch(err => console.error('Error: ', err))

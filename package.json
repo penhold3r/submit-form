@@ -1,6 +1,6 @@
 {
 	"name": "submit-form-data",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Submit form data asynchronous",
 	"main": "index.js",
 	"scripts": {
