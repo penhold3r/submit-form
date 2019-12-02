@@ -2,7 +2,7 @@
 
 Submit form data asynchronous
 
-## Instalation
+## Install
 
 `npm i submit-form-data`
 
