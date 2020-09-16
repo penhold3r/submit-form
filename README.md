@@ -9,20 +9,38 @@ Submit form data asynchronous
 ## Usage
 
 ```javascript
-import { submitFormData } from 'submit-form-data'
+import submitFormData from 'submit-form-data'
 
 const form = document.querySelector('.form')
 
 const settings = {
 	dest: 'process_data.php',
 	fields: '.field',
-	successMsg: 'Message sent!',
-	errorMsg: 'There was an error',
-	sending: 'Sending message...',
-	reciever: 'hello@world-mail.com'
+	reciever: 'hello@world-mail.com',
+	extraData: {
+		foo: 'bar',
+	},
 }
 
-submitFormData(form, settings)
+form.addEventListener('submit', async e => {
+	e.preventDefault()
+
+	try {
+		const { data } = await submitFormData(form, settings)
+
+		console.log(data)
+	} catch (error) {
+		const { data, valid } = error
+
+		if (valid) {
+			// connection error
+			console.log(data.error)
+		} else {
+			// invalid form field
+			console.log(data.field)
+		}
+	}
+})
 ```
 
 ```html
@@ -37,16 +55,21 @@ submitFormData(form, settings)
 
 ## Options (\* required)
 
-| Option     | Type    | Deafult      | Description                                                                  |
-| ---------- | ------- | ------------ | ---------------------------------------------------------------------------- |
-| dest\*     | String  | -            | Path to file to precess data                                                 |
-| fields\*   | String  | -            | Class name of inputs to send                                                 |
-| successMsg | String  | "ok"         | Confirmation message to display                                              |
-| errorMsg   | String  | "error"      | Error message to display                                                     |
-| sending    | String  | "sending..." | Message to display while sending                                             |
-| reciever   | String  | null         | Email that can be later processed in the back-end                            |
-| closeMsg   | Boolean | false        | Will create a div with a "&times;" that when clicked it removes the messages |
-| urlencoded | Boolean | false        | It will send data url-encoded                                                |
+| Option     | Type    | Deafult | Description                                       |
+| ---------- | ------- | ------- | ------------------------------------------------- |
+| dest\*     | String  | -       | Path to file to precess data                      |
+| fields\*   | String  | -       | Class name of inputs to send                      |
+| reciever   | String  | null    | Email that can be later processed in the back-end |
+| urlencoded | Boolean | false   | It will send data url-encoded                     |
+| extraData  | Object  | null    | object with extra data to append to form data     |
+
+## Returns: Object
+
+| Property | Type    | Description                                                                                   |
+| -------- | ------- | --------------------------------------------------------------------------------------------- |
+| ok       | Boolean | true if the server was reached succesfuly                                                     |
+| valid    | Boolean | returns false if any field in the form is invalid                                             |
+| data     | Object  | returns sent data back. If _ok: false_ returns error. If _valid: false_ returns invalid field |
 
 ## Back-end example
 
@@ -58,6 +81,9 @@ submitFormData(form, settings)
    $name = $data['name'];
    $email = $data['email'];
    $message = $data['message'];
+
+   // extra data
+   $foo = $data['foo']
 
    $dest = isset( $data['dest'] )
       ? $data['dest']

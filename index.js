@@ -1,3 +1,4 @@
+import { serialize } from 'object-to-formdata'
 /* eslint-disable */
 //--------------------------------------------------------
 //>>   SUBMIT FORMS
@@ -9,84 +10,87 @@
  */
 const submitFormData = (form, settings) => {
 	if (!settings || !form) {
-		console.warn('Must configure form settings')
-		return false
-	} else if (!settings.dest) console.warn('Must set "dest" property: example – "dest":"/contact"')
-	else if (!settings.fields)
-		console.warn('Must set "fields" property value with input class name.')
-	else {
+		throw new Error('Must configure form settings')
+	} else if (!settings.dest) {
+		throw new Error('Must set "dest" property: example – "dest":"/contact"')
+	} else if (!settings.fields) {
+		throw new Error('Must set "fields" property value with input class name.')
+	} else {
+		const fields = form.querySelectorAll(settings.fields)
+
 		form.setAttribute('novalidate', '')
-		submitForm(form, settings)
+
+		return send(form, fields, settings)
 	}
 }
 //
-const submitForm = (form, settings) => {
-	const fields = form.querySelectorAll(settings.fields)
-	const msg = document.createElement('div')
-	const validate = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/
+const send = (form, fields, settings) => {
 	const formData = new FormData(form)
-	const opt = { method: 'POST' }
+	const opt = { method: 'POST', credentials: 'same-origin' }
+	let bodyData
 	//
+	const { valid, field } = validate(fields)
+	//
+	if (settings.name) formData.append('form-name', settings.name)
+	if (settings.reciever) formData.append('dest', settings.reciever)
+	if (settings.wpAction) formData.append('action', settings.wpAction)
+	if (settings.extraData && Object.keys(settings.extraData).length > 0) {
+		devLog('extraData', settings.extraData)
+		bodyData = serialize(settings.extraData, null, formData)
+	}
+	//
+	settings.urlencoded = settings.urlencoded || true
+	//
+	opt.headers = {
+		'Content-Type': settings.urlencoded
+			? 'application/x-www-form-urlencoded'
+			: 'application/json',
+		'Cache-Control': 'no-cache',
+	}
+	opt.body = settings.urlencoded ? urlencodeFormData(bodyData) : bodyData
+	//
+	devLog('to send:', opt)
+	//
+	return new Promise((resolve, reject) => {
+		valid
+			? fetch(settings.dest, opt)
+					.then(result => result.json())
+					.then(resp => {
+						devLog('RESPONSE: ', resp)
+
+						form.reset()
+
+						resolve({ ok: true, data: resp })
+					})
+					.catch(error => {
+						reject({ ok: false, data: { error }, valid })
+						devLog('Error: ', error)
+					})
+			: reject({ ok: false, data: { field }, valid })
+	})
+}
+//
+const validate = fields => {
+	const regex = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/
+
 	for (let field of fields) {
 		if (field.hasAttribute('required')) {
 			if (
 				field.value === '' ||
-				(field.getAttribute('name') === 'email' && !validate.test(field.value))
+				(field.getAttribute('name') === 'email' && !regex.test(field.value))
 			) {
 				field.focus()
-				return
+				devLog('invalid input', field)
+				return { field, valid: false }
 			}
 		}
 	}
-	//
-	msg.classList.add('output-msg')
-	msg.innerHTML = '<p></p>'
-	if (!document.body.contains(document.querySelector('.output-msg'))) form.append(msg)
-	//
-	if (settings.closeMsg === 'true') {
-		const msgClose = document.createElement('div')
-		msgClose.classList.add('close-form-msg')
-		msgClose.innerHTML = '&times;'
-		msg.appendChild(msgClose)
-		msgClose.addEventListener('click', e => msg.classList.remove('visible'))
-	}
-	//
-	if (settings.name) formData.append('form-name', settings.name)
-	if (settings.reciever) formData.append('dest', settings.reciever)
-	//
-	opt.headers = {
-		'Content-Type': settings.urlencoded ? 'application/x-www-form-urlencoded' : 'application/json'
-	}
-	opt.body = settings.urlencoded ? urlencodeFormData(formData) : formData
-	//
-	process.env.NODE_ENV && process.env.NODE_ENV === 'development' && console.log('data: ', opt)
-	//
-	msg.querySelector('p').innerHTML = !settings.sending ? 'Sending...' : settings.sending
-	msg.classList.add('visible')
-
-	fetch(settings.dest, opt)
-		.then(resp => {
-			if (resp.ok) {
-				msg.querySelector('p').innerHTML = !settings.successMsg ? 'ok' : settings.successMsg
-				msg.querySelector('p').className = 'msg-ok'
-				msg.classList.add('visible')
-				form.reset()
-				//
-				process.env.NODE_ENV &&
-					process.env.NODE_ENV === 'development' &&
-					console.log('successful', opt)
-			} else {
-				msg.querySelector('p').innerHTML = !settings.errorMsg ? 'error' : settings.errorMsg
-				msg.querySelector('p').className = 'msg-error'
-				msg.classList.add('visible')
-				form.reset()
-				//
-				process.env.NODE_ENV && process.env.NODE_ENV === 'development' && console.warn('failed')
-			}
-		})
-		.catch(err => console.error('Error: ', err))
+	return { valid: true }
 }
 //
+const devLog = (...args) => {
+	process.env.NODE_ENV && process.env.NODE_ENV === 'development' && console.log(...args)
+}
 /**
  *
  * @param {FormData} fd - FromData Object to encode
@@ -102,5 +106,5 @@ const urlencodeFormData = fd => {
 	}
 	return str
 }
-//
-module.exports.submitFormData = submitFormData
+//------------------------------------------------
+export default submitFormData

@@ -1,6 +1,6 @@
 {
 	"name": "submit-form-data",
-	"version": "1.0.1",
+	"version": "2.0.2",
 	"description": "Submit form data asynchronous",
 	"main": "index.js",
 	"scripts": {
@@ -10,10 +10,19 @@
 		"type": "git",
 		"url": "git+https://github.com/penhold3r/submit-form.git"
 	},
-	"author": "penholder <penhold3r@gmail.com>",
+	"author": "Penholder Designerd <penhold3r@gmail.com>",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/penhold3r/submit-form/issues"
 	},
-	"homepage": "https://github.com/penhold3r/submit-form#readme"
+	"homepage": "https://github.com/penhold3r/submit-form#readme",
+	"keywords": [
+		"formdata",
+		"form",
+		"async",
+		"php"
+	],
+	"dependencies": {
+		"object-to-formdata": "^4.1.0"
+	}
 }
