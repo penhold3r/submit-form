@@ -55,21 +55,23 @@ form.addEventListener('submit', async e => {
 
 ## Options (\* required)
 
-| Option     | Type    | Deafult | Description                                       |
-| ---------- | ------- | ------- | ------------------------------------------------- |
-| dest\*     | String  | -       | Path to file to precess data                      |
-| fields\*   | String  | -       | Class name of inputs to send                      |
-| reciever   | String  | null    | Email that can be later processed in the back-end |
-| urlencoded | Boolean | false   | It will send data url-encoded                     |
-| extraData  | Object  | null    | object with extra data to append to form data     |
+| Option     | Type    | Deafult | Description                                                    |
+| ---------- | ------- | ------- | -------------------------------------------------------------- |
+| dest\*     | String  | -       | Path to file to precess data                                   |
+| fields\*   | String  | -       | Class name of inputs to send                                   |
+| reciever   | String  | null    | Email that can be later processed in the back-end              |
+| urlencoded | Boolean | false   | It will send data url-encoded                                  |
+| name       | String  | null    | Appends _form-name_ attribute to formData                      |
+| wpAction   | String  | null    | Appends _action_ attribute to formData to be used in wordpress |
+| extraData  | Object  | null    | object with extra data to append to form data                  |
 
 ## Returns: Object
 
-| Property | Type    | Description                                                                                   |
-| -------- | ------- | --------------------------------------------------------------------------------------------- |
-| ok       | Boolean | true if the server was reached succesfuly                                                     |
-| valid    | Boolean | returns false if any field in the form is invalid                                             |
-| data     | Object  | returns sent data back. If _ok: false_ returns error. If _valid: false_ returns invalid field |
+| Property | Type    | Description                                                                                |
+| -------- | ------- | ------------------------------------------------------------------------------------------ |
+| ok       | Boolean | true if the server was reached succesfuly                                                  |
+| valid    | Boolean | returns false if any field in the form is invalid                                          |
+| data     | Object  | returns server data. If _ok: false_ returns error. If _valid: false_ returns invalid field |
 
 ## Back-end example
 
@@ -100,6 +102,12 @@ form.addEventListener('submit', async e => {
    $body .= 'Email: '. $email .'<br/>'
    $body .= 'Message: '. $message;
 
-   mail($dest, '=?UTF-8?B?'. $subject .'?=', $body, $headers);
+   $sent = mail($dest, '=?UTF-8?B?'. $subject .'?=', $body, $headers);
+
+   if($sent){
+      return json_encode(array('data' => $data))
+   }else{
+      return json_encode(array('error' => 'something went wrong'));
+   }
 
 ```

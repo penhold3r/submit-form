@@ -1,8 +1,4 @@
-import { serialize } from 'object-to-formdata'
-/* eslint-disable */
-//--------------------------------------------------------
-//>>   SUBMIT FORMS
-//--------------------------------------------------------
+const { serialize } = require('object-to-formdata')
 /**
  *
  * @param {HTMLFormElement} form - reference to form elemnt
@@ -69,7 +65,11 @@ const send = (form, fields, settings) => {
 			: reject({ ok: false, data: { field }, valid })
 	})
 }
-//
+/**
+ *
+ * @param {NodeList} fields - List of fields inputs
+ * @returns {Object}
+ */
 const validate = fields => {
 	const regex = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/
 
@@ -87,7 +87,11 @@ const validate = fields => {
 	}
 	return { valid: true }
 }
-//
+/**
+ *
+ * @param {args} - args to be loged only in developement mode
+ *
+ */
 const devLog = (...args) => {
 	process.env.NODE_ENV && process.env.NODE_ENV === 'development' && console.log(...args)
 }
@@ -107,4 +111,4 @@ const urlencodeFormData = fd => {
 	return str
 }
 //------------------------------------------------
-export default submitFormData
+module.exports = submitFormData
